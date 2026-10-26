@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Base Paper Summary</h2>
+    <div class="card mb-3">
+        <div class="card-header fw-bold">Title</div>
+        <div class="card-body">
+            <h5 class="card-title">Revealing the Reliability of Amazon Products via Innovative Fake Review Detection using Machine Learning</h5>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">Key Methodologies</h5>
+                    <ul>
+                        <li><strong>BERT (Bidirectional Encoder Representations from Transformers):</strong> Used for deep contextual understanding of review text.</li>
+                        <li><strong>LSTM (Long Short-Term Memory):</strong> Used to capture sequential patterns in text.</li>
+                        <li><strong>Hybrid Approach:</strong> Combining textual analysis with metadata features (Verified Purchase, Review Length).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Results</h5>
+                    <ul>
+                        <li><strong>Accuracy:</strong> The proposed BERT model achieved an accuracy of <strong>96.3%</strong>.</li>
+                        <li><strong>Comparison:</strong> Outperformed traditional models like SVM (80.6%) and Random Forest (81.1%).</li>
+                        <li><strong>Dataset:</strong> Trained on a balanced dataset of 50,000 reviews (35k Authentic, 15k Fake).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

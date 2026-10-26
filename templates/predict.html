@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-3">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            
+            <div class="text-center mb-3"> 
+                <h3 class="fw-bold m-0">Fake Review Detector</h3>
+                <p class="text-muted small mt-1">Analyze review authenticity using our Champion Model.</p>
+            </div>
+
+            <div class="card shadow-lg border-0 overflow-hidden">
+                <div class="card-header bg-white py-3 border-bottom d-flex align-items-center">
+                    <div class="bg-primary bg-opacity-10 p-2 rounded-circle me-3">
+                        <i class="fas fa-microchip text-primary"></i>
+                    </div>
+                    <span class="fw-bold text-uppercase" style="letter-spacing: 0.5px;">Live Analysis Engine</span>
+                </div>
+                <div class="card-body p-4 bg-white">
+                    <form method="POST">
+                        <!-- Review Text -->
+                        <div class="mb-4">
+                            <label for="review_text" class="form-label fw-bold text-uppercase text-muted mb-2" style="font-size: 0.8rem; letter-spacing: 0.5px;">Review Content</label>
+                            <textarea class="form-control" id="review_text" name="review_text" rows="5" placeholder="Paste the customer review here..." required style="min-height: 120px;">{{ review_text }}</textarea>
+                        </div>
+
+                        <!-- Metadata Row -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="rating" class="form-label fw-bold text-uppercase text-muted mb-2" style="font-size: 0.8rem; letter-spacing: 0.5px;">Star Rating</label>
+                                <select class="form-select" id="rating" name="rating">
+                                    <option value="unknown" selected>Unknown</option>
+                                    <option value="1">⭐ 1 Star</option>
+                                    <option value="2">⭐⭐ 2 Stars</option>
+                                    <option value="3">⭐⭐⭐ 3 Stars</option>
+                                    <option value="4">⭐⭐⭐⭐ 4 Stars</option>
+                                    <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="is_verified" class="form-label fw-bold text-uppercase text-muted mb-2" style="font-size: 0.8rem; letter-spacing: 0.5px;">Purchase Verification</label>
+                                <select class="form-select" id="is_verified" name="is_verified">
+                                    <option value="unknown" selected>Unknown (recommended)</option>
+                                    <option value="yes">Verified purchase</option>
+                                    <option value="no">Not verified</option>
+                                </select>
+                                <small class="text-muted">If unknown, both possibilities are considered.</small>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary py-3 fw-bold shadow-sm" style="font-size: 1.1rem;"> 
+                                <i class="fas fa-search me-2"></i> Analyze Review Authenticity
+                            </button>
+                        </div>
+                    </form>
+
+                    {% if prediction %}
+                    <div class="verdict-box animate-fade-in mt-4 py-4 px-3 {% if prediction == 'Fake Review' %}verdict-fake{% else %}verdict-real{% endif %}">
+                        <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                            {% if prediction == 'Fake Review' %}
+                                <i class="fas fa-exclamation-triangle fa-2x"></i>
+                                <h3 class="fw-bold m-0 ms-2">FAKE DETECTED</h3>
+                            {% else %}
+                                <i class="fas fa-check-circle fa-2x"></i>
+                                <h3 class="fw-bold m-0 ms-2">REAL REVIEW</h3>
+                            {% endif %}
+                        </div>
+                        <p class="mb-0 fs-5">Confidence Score: <strong>{{ confidence }}%</strong></p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-3">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            
+            <div class="text-center mb-4">
+                <h3 class="fw-bold m-0">Model Training Center</h3>
+                <p class="text-muted small mt-1">Initiate retraining of the underlying AI model with the latest dataset.</p>
+            </div>
+
+            <!-- System Status Card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white py-3 border-bottom d-flex align-items-center">
+                    <div class="bg-success bg-opacity-10 p-2 rounded-circle me-3">
+                        <i class="fas fa-server text-success"></i>
+                    </div>
+                    <span class="fw-bold text-uppercase" style="letter-spacing: 0.5px;">Current System Status</span>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <h6 class="text-muted text-uppercase small fw-bold" style="letter-spacing: 0.5px;">Active Model</h6>
+                            <p class="fs-5 fw-bold mb-0 text-dark">BERT-Hybrid v2.1</p>
+                        </div>
+                        <div class="col-md-4 mb-3 mb-md-0 border-start border-end">
+                            <h6 class="text-muted text-uppercase small fw-bold" style="letter-spacing: 0.5px;">Dataset Size</h6>
+                            <p class="fs-5 fw-bold mb-0 text-dark">50,000 Reviews</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-muted text-uppercase small fw-bold" style="letter-spacing: 0.5px;">Last Trained</h6>
+                            <p class="fs-5 fw-bold mb-0 text-success"><i class="fas fa-check-circle me-1"></i> 12 Days Ago</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Training Control Card -->
+            <div class="card shadow-lg border-0 overflow-hidden">
+                <div class="card-header bg-white py-3 border-bottom d-flex align-items-center">
+                    <div class="bg-primary bg-opacity-10 p-2 rounded-circle me-3">
+                        <i class="fas fa-cogs text-primary"></i>
+                    </div>
+                    <span class="fw-bold text-uppercase" style="letter-spacing: 0.5px;">Retraining Pipeline</span>
+                </div>
+                <div class="card-body p-4 bg-white text-center">
+                    <p class="text-muted mb-4 px-md-4">Click below to initialize the neural network retraining sequence. This process will pull the latest verified reviews from the database and fine-tune the existing weights to adapt to new spam patterns.</p>
+                    
+                    <button id="trainBtn" class="btn btn-primary py-3 px-4 fw-bold shadow-sm" style="font-size: 1.1rem;">
+                        <i class="fas fa-sync-alt me-2"></i> Start Model Retraining
+                    </button>
+
+                    <!-- Progress Section (Hidden initially) -->
+                    <div id="progressSection" class="mt-4 text-start" style="display: none;">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small fw-bold text-muted text-uppercase" id="statusText" style="letter-spacing: 0.5px;">Initializing GPU Clusters...</span>
+                            <span class="small fw-bold text-primary" id="percentText">0%</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 12px; border-radius: 10px; background-color: #f1f5f9;">
+                            <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        
+                        <!-- Mock Terminal Console -->
+                        <div class="bg-dark text-success p-3 rounded-3 shadow-inner" style="font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; height: 160px; overflow-y: auto; text-align: left;" id="consoleOutput">
+                            > System ready. Awaiting command...<br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('trainBtn').addEventListener('click', function() {
+        const btn = this;
+        const progressSection = document.getElementById('progressSection');
+        const progressBar = document.getElementById('progressBar');
+        const percentText = document.getElementById('percentText');
+        const statusText = document.getElementById('statusText');
+        const consoleOutput = document.getElementById('consoleOutput');
+        
+        // Disable button & show UI
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Training in Progress...';
+        progressSection.style.display = 'block';
+        
+        // Reset states
+        progressBar.style.width = '0%';
+        progressBar.classList.add('progress-bar-animated', 'bg-primary');
+        progressBar.classList.remove('bg-success');
+        percentText.classList.replace('text-success', 'text-primary');
+        consoleOutput.innerHTML = '<span class="text-light">> Executing run_training.py...</span><br>';
+        
+        // Mock Logs Sequence
+        const logs = [
+            "<span class='text-light'>> Loading updated dataset (50k records)...</span>",
+            "<span class='text-warning'>> Tokenizing text inputs using DistilBERT...</span>",
+            "> Epoch 1/3: Loss=0.412, Accuracy=0.885",
+            "> Epoch 2/3: Loss=0.205, Accuracy=0.941",
+            "> Epoch 3/3: Loss=0.108, Accuracy=0.963",
+            "<span class='text-light'>> Evaluating on test split... Done.</span>",
+            "<span class='text-warning'>> Compiling weights & saving champion_model.pkl...</span>"
+        ];
+        
+        let currentLog = 0;
+        let progress = 0;
+        
+        // Simulate progress bar and terminal logs over the ~3 seconds
+        const interval = setInterval(() => {
+            // Increment progress slowly up to 95%
+            if (progress < 95) {
+                progress += Math.floor(Math.random() * 5) + 1; 
+                if (progress > 95) progress = 95;
+                progressBar.style.width = progress + '%';
+                percentText.textContent = progress + '%';
+            }
+            
+            // Pop logs into the console
+            if (progress % 15 === 0 || Math.random() < 0.1) {
+                if (currentLog < logs.length) {
+                    consoleOutput.innerHTML += logs[currentLog] + '<br>';
+                    consoleOutput.scrollTop = consoleOutput.scrollHeight;
+                    currentLog++;
+                    statusText.textContent = "Processing Epochs...";
+                }
+            }
+        }, 100);
+
+        // Call the backend API
+        fetch("{{ url_for('run_dummy_training') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Stop the fake simulation and force complete
+            clearInterval(interval);
+            
+            progressBar.style.width = '100%';
+            progressBar.classList.remove('progress-bar-animated');
+            progressBar.classList.replace('bg-primary', 'bg-success');
+            
+            percentText.textContent = '100%';
+            percentText.classList.replace('text-primary', 'text-success');
+            statusText.textContent = "Training Complete!";
+            
+            consoleOutput.innerHTML += '<span class="text-info">> Server Response: ' + data.message + '</span><br>';
+            consoleOutput.innerHTML += '<span class="text-success">> Training cycle finished successfully. GPU released.</span><br>';
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+            
+            btn.innerHTML = '<i class="fas fa-check-circle me-2"></i> Model Updated Successfully';
+            btn.classList.replace('btn-primary', 'btn-success');
+            
+            // Optional: Re-enable the button after 5 seconds
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-sync-alt me-2"></i> Start Model Retraining';
+                btn.classList.replace('btn-success', 'btn-primary');
+            }, 5000);
+        })
+        .catch(error => {
+            clearInterval(interval);
+            statusText.textContent = "Error Occurred";
+            consoleOutput.innerHTML += '<span class="text-danger">> Critical Error: Failed to connect to training server.</span><br>';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> Retry Training';
+            btn.classList.replace('btn-primary', 'btn-danger');
+        });
+    });
+</script>
+{% endblock %}

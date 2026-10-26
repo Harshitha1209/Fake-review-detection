@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReviewGuard | AI Intelligence</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* --- COLOR PALETTE --- */
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); /* Violet to Purple */
+            --secondary-gradient: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%); /* Blue to Cyan */
+            --sidebar-bg: #0f172a;
+            --bg-body: #f8fafc;
+            --surface-white: #ffffff;
+            --text-main: #1e293b;
+            --text-light: #64748b;
+            --border-light: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+            
+            /* --- DIMENSIONS --- */
+            --sidebar-width: 280px;
+            --header-height: 80px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 24px 24px;
+            overflow-x: hidden;
+            color: var(--text-main);
+        }
+
+        h1, h2, h3, h4, h5, h6, .navbar-brand, .btn {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* --- LAYOUT WRAPPER --- */
+        /* FIXED: Replaced .d-flex with #wrapper to avoid breaking Bootstrap's layout */
+        #wrapper {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- SIDEBAR DESIGN --- */
+        #sidebar-wrapper {
+            min-width: var(--sidebar-width);
+            max-width: var(--sidebar-width);
+            background-color: var(--sidebar-bg);
+            background-image: linear-gradient(to bottom, #0f172a, #1e293b);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 1000;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Abstract Glow in Sidebar */
+        #sidebar-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            left: -100px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .sidebar-heading {
+            padding: 2rem 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.5px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .sidebar-heading i {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.8rem;
+        }
+
+        .list-group {
+            padding: 1.5rem;
+            gap: 0.5rem;
+        }
+
+        .list-group-item {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-weight: 500;
+            border-radius: 12px;
+            padding: 12px 16px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+
+        .list-group-item i {
+            width: 24px;
+            font-size: 1.1rem;
+            transition: transform 0.2s;
+        }
+
+        .list-group-item:hover {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            transform: translateX(5px);
+        }
+        
+        .list-group-item:hover i {
+            color: #a855f7;
+        }
+
+        .list-group-item.active {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+        
+        .list-group-item.active i {
+            color: white;
+        }
+
+        .sidebar-section-label {
+            color: #64748b;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 600;
+            padding: 0 16px;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Sidebar Footer */
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 1.5rem;
+            background: rgba(0,0,0,0.2);
+            backdrop-filter: blur(5px);
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            transition: background 0.2s;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--secondary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        /* --- MAIN CONTENT AREA --- */
+        #page-content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            height: var(--header-height);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .page-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+            letter-spacing: -0.5px;
+        }
+
+        /* Scrollable Content */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            scroll-behavior: smooth;
+        }
+
+        /* --- MODERN CARDS --- */
+        .card {
+            background: var(--surface-white);
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.12);
+        }
+
+        .card-header {
+            background: #fff;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 1.5rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-header i {
+            color: #6366f1;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        /* --- HERO & CUSTOM BUTTONS --- */
+        .hero-section {
+            padding: 3rem 1.5rem;
+            background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(248,250,252,1) 100%);
+            border-radius: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-light);
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-btn {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.5);
+            text-decoration: none;
+            border: none;
+        }
+        .hero-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px -5px rgba(99, 102, 241, 0.6);
+            color: white;
+        }
+
+        .btn {
+            border-radius: 10px;
+            padding: 10px 24px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        /* --- FORM ELEMENTS --- */
+        .form-control, .form-select {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            background-color: #fff;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #475569;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- PREDICTION VERDICT --- */
+        .verdict-box {
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .verdict-fake {
+            background: #fef2f2;
+            border: 2px solid #fee2e2;
+            color: #991b1b;
+        }
+        
+        .verdict-real {
+            background: #f0fdf4;
+            border: 2px solid #dcfce7;
+            color: #166534;
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Responsive Mobile Toggle */
+        @media (max-width: 768px) {
+            #sidebar-wrapper {
+                margin-left: calc(-1 * var(--sidebar-width));
+            }
+            #wrapper.toggled #sidebar-wrapper {
+                margin-left: 0;
+            }
+            .top-navbar {
+                padding: 0 1rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="wrapper">
+        
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <div class="sidebar-heading">
+                <i class="fas fa-brain"></i>
+                <span>ReviewGuard<span style="color:#a855f7;">AI</span></span>
+            </div>
+            
+            <div class="list-group list-group-flush">
+                
+                <div class="sidebar-section-label">Analytics</div>
+                <a href="{{ url_for('home') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'home' %}active{% endif %}">
+                    <i class="fas fa-chart-pie"></i> Overview
+                </a>
+                <a href="{{ url_for('base_paper') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'base_paper' %}active{% endif %}">
+                    <i class="fas fa-scroll"></i> Methodology
+                </a>
+                <a href="{{ url_for('info') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'info' %}active{% endif %}">
+                    <i class="fas fa-lightbulb"></i> Intelligence
+                </a>
+
+                {% if current_user.is_authenticated %}
+                    <div class="sidebar-section-label">Detection Engine</div>
+                    <a href="{{ url_for('predict') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'predict' %}active{% endif %}">
+                        <i class="fas fa-search-location"></i> Live Predictor
+                    </a>
+                    <a href="{{ url_for('training_page') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'training_page' %}active{% endif %}">
+                        <i class="fas fa-layer-group"></i> Retrain Model
+                    </a>
+                    
+                    {% if current_user.is_admin %}
+                    <div class="sidebar-section-label">System</div>
+                    <a href="{{ url_for('admin_dashboard') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">
+                        <i class="fas fa-users-cog"></i> Admin Control
+                    </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <div class="sidebar-footer">
+                {% if current_user.is_authenticated %}
+                    <div class="user-card">
+                        <div class="user-avatar">
+                            {{ current_user.username[0].upper() }}
+                        </div>
+                        <div style="flex: 1; overflow: hidden;">
+                            <div class="fw-bold text-white text-truncate">{{ current_user.username }}</div>
+                            <div style="font-size: 0.75rem; color: #94a3b8;">{{ 'Administrator' if current_user.is_admin else 'Analyst' }}</div>
+                        </div>
+                        <a href="{{ url_for('logout') }}" class="text-light opacity-50 hover-opacity-100" title="Logout">
+                            <i class="fas fa-power-off"></i>
+                        </a>
+                    </div>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-primary w-100 btn-sm">Access System</a>
+                {% endif %}
+            </div>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            
+            <!-- Top Navbar -->
+            <nav class="top-navbar">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-light border d-md-none me-3" id="menu-toggle"><i class="fas fa-bars"></i></button>
+                    <h5 class="m-0 page-title">
+                        {% if request.endpoint == 'home' %}Dashboard Overview{% elif request.endpoint == 'predict' %}Real-Time Analysis{% elif request.endpoint == 'base_paper' %}Research Core{% else %}Control Panel{% endif %}
+                    </h5>
+                </div>
+                
+                <div class="d-flex gap-4 align-items-center">
+                    <div class="d-none d-md-flex align-items-center gap-2 text-muted small">
+                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-2">
+                            <span class="spinner-grow spinner-grow-sm me-1" role="status" aria-hidden="true"></span>
+                            BERT Model Active
+                        </span>
+                    </div>
+                    <a href="#" class="position-relative text-secondary">
+                        <i class="fas fa-bell fa-lg"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Main Scrollable Area -->
+            <div class="main-content">
+                <!-- Flash Messages -->
+                <div class="mb-4">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {% if category == 'success' %}<i class="fas fa-check-circle text-success"></i>{% endif %}
+                                    {% if category == 'danger' %}<i class="fas fa-exclamation-circle text-danger"></i>{% endif %}
+                                    <span class="ms-2 fw-medium">{{ message }}</span>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                </div>
+
+                <!-- Page Content Injection -->
+                {% block content %}{% endblock %}
+
+                <footer class="mt-5 pt-4 border-top text-center text-muted small">
+                    <p>&copy; 2026 ReviewGuard AI. Powered by <strong>BERT</strong> & <strong>LSTM</strong> Neural Networks.</p>
+                </footer>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Menu Toggle Script -->
+    <script>
+        var el = document.getElementById("wrapper");
+        var toggleButton = document.getElementById("menu-toggle");
+
+        toggleButton.onclick = function () {
+            el.classList.toggle("toggled");
+        };
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>
